@@ -1,1 +1,12 @@
-import {redirect} from "next/navigation";import {getUser} from "../../lib/auth";export default async function Inventory(){if(!(await getUser()))redirect("/login");return <><h1>Inventory</h1><div className="card">Inventory management area.</div></>
+import { redirect } from "next/navigation";
+import { getUser } from "../../lib/auth";
+
+export default async function Inventory() {
+  if (!(await getUser())) redirect("/login");
+  return (
+    <>
+      <h1>Inventory</h1>
+      <div className="card">Inventory management area.</div>
+    </>
+  );
+}
