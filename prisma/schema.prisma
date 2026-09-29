@@ -1,0 +1,15 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql" url = env("DATABASE_URL") }
+enum Role { USER ADMIN FINANCE_ADMIN MARKET_ADMIN SUPPORT_ADMIN READ_ONLY_ADMIN }
+enum TxType { DEPOSIT WITHDRAWAL INVESTMENT PROFIT FEE ADJUSTMENT }
+enum TxStatus { PENDING COMPLETED FAILED REJECTED }
+enum OrderSide { BUY SELL }
+enum OrderStatus { PENDING FILLED CANCELLED REJECTED }
+model User { id String @id @default(cuid()) fullName String email String @unique passwordHash String role Role @default(USER) status String @default("ACTIVE") createdAt DateTime @default(now()) updatedAt DateTime @updatedAt wallet Wallet? transactions WalletTransaction[] orders Order[] holdings Holding[] auditLogs AuditLog[] @relation("Actor") tickets SupportTicket[] }
+model Wallet { id String @id @default(cuid()) userId String @unique balance Decimal @default(0) @db.Decimal(18,2) availableBalance Decimal @default(0) @db.Decimal(18,2) updatedAt DateTime @updatedAt user User @relation(fields:[userId],references:[id],onDelete:Cascade) transactions WalletTransaction[] }
+model WalletTransaction { id String @id @default(cuid()) walletId String userId String type TxType amount Decimal @db.Decimal(18,2) fee Decimal @default(0) @db.Decimal(18,2) status TxStatus @default(PENDING) method String? reference String @unique createdAt DateTime @default(now()) wallet Wallet @relation(fields:[walletId],references:[id],onDelete:Cascade) user User @relation(fields:[userId],references:[id],onDelete:Cascade) }
+model Stock { id String @id @default(cuid()) symbol String @unique name String price Decimal @db.Decimal(18,4) changePercent Decimal @default(0) @db.Decimal(8,4) volume BigInt @default(0) marketCap Decimal @default(0) @db.Decimal(24,2) sector String? industry String? featured Boolean @default(false) active Boolean @default(true) createdAt DateTime @default(now()) updatedAt DateTime @updatedAt orders Order[] holdings Holding[] }
+model Order { id String @id @default(cuid()) userId String stockId String side OrderSide quantity Decimal @db.Decimal(18,6) price Decimal @db.Decimal(18,4) total Decimal @db.Decimal(18,2) status OrderStatus @default(PENDING) createdAt DateTime @default(now()) user User @relation(fields:[userId],references:[id],onDelete:Cascade) stock Stock @relation(fields:[stockId],references:[id]) }
+model Holding { id String @id @default(cuid()) userId String stockId String quantity Decimal @db.Decimal(18,6) averagePrice Decimal @db.Decimal(18,4) updatedAt DateTime @updatedAt user User @relation(fields:[userId],references:[id],onDelete:Cascade) stock Stock @relation(fields:[stockId],references:[id]) @@unique([userId,stockId]) }
+model SupportTicket { id String @id @default(cuid()) userId String subject String message String status String @default("OPEN") createdAt DateTime @default(now()) user User @relation(fields:[userId],references:[id],onDelete:Cascade) }
+model AuditLog { id String @id @default(cuid()) actorId String action String targetType String targetId String? metadata String? createdAt DateTime @default(now()) actor User @relation("Actor",fields:[actorId],references:[id],onDelete:Cascade) }
