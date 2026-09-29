@@ -1,1 +1,12 @@
-import {redirect} from "next/navigation";import {getUser} from "../../lib/auth";export default async function Investments(){if(!(await getUser()))redirect("/login");return <><h1>Investments</h1><div className="card">Investment positions and plans.</div></>
+import { redirect } from "next/navigation";
+import { getUser } from "../../lib/auth";
+
+export default async function Investments() {
+  if (!(await getUser())) redirect("/login");
+  return (
+    <>
+      <h1>Investments</h1>
+      <div className="card">Investment positions and plans.</div>
+    </>
+  );
+}
