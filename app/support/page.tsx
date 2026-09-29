@@ -1,0 +1,1 @@
+import {getUser} from "../../lib/auth";import {redirect} from "next/navigation";export default async function Support(){if(!(await getUser()))redirect("/login");return <><h1>Support</h1><div className="card"><h2>Support Center</h2><p>Support tickets will be stored in the platform database as the support module is expanded.</p></div></>}
