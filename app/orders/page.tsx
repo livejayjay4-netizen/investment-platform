@@ -1,1 +1,12 @@
-import {redirect} from "next/navigation";import {getUser} from "../../lib/auth";export default async function Orders(){if(!(await getUser()))redirect("/login");return <><h1>Orders</h1><div className="card">Buy and sell orders.</div></>
+import { redirect } from "next/navigation";
+import { getUser } from "../../lib/auth";
+
+export default async function Orders() {
+  if (!(await getUser())) redirect("/login");
+  return (
+    <>
+      <h1>Orders</h1>
+      <div className="card">Buy and sell orders.</div>
+    </>
+  );
+}
