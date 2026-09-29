@@ -1,0 +1,1 @@
+import {getUser} from "../../lib/auth";import {redirect} from "next/navigation";export default async function Account(){const u=await getUser();if(!u)redirect("/login");return <><h1>Account</h1><div className="card"><p><b>Full name:</b> {u.fullName}</p><p><b>Email:</b> {u.email}</p><p><b>Role:</b> {u.role}</p><p><b>Status:</b> {u.status}</p></div></>}
