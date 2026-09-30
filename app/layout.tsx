@@ -1,6 +1,7 @@
 import "./globals.css";
 import Link from "next/link";
 import { getUser } from "../lib/auth";
+export const metadata = { title: "Investment Platform", description: "Your investment workspace", manifest: "/manifest.webmanifest" };
 const primary = [["Dashboard","/dashboard","⌂"],["Invest","/stocks","↗"],["Wallet","/wallet","₦"],["Portfolio","/portfolio","◔"],["Orders","/orders","≡"],["Transactions","/transactions","↔"]];
 const more = [["Investments","/investments"],["Analytics","/investment-dashboard"],["Support","/support"],["Account","/account"]];
 export default async function Layout({children}:{children:React.ReactNode}) {
