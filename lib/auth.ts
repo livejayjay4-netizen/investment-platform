@@ -1,40 +1,67 @@
 import {cookies} from "next/headers";
-import {jwtVerify,SignJWT} from "jose";
+import {createHash,randomBytes} from "crypto";
 import {db} from "./prisma";
 
-function getSecret() {
-  const value = process.env.AUTH_SECRET;
-  if (!value || value.length < 32) {
-    throw new Error("AUTH_SECRET must be configured with at least 32 characters.");
-  }
-  return new TextEncoder().encode(value);
+const COOKIE="session";
+const SESSION_DAYS=7;
+const MAX_AGE=SESSION_DAYS*24*60*60;
+
+function hashToken(token:string){
+  return createHash("sha256").update(token).digest("hex");
 }
 
 export async function setSession(userId:string){
-  const token=await new SignJWT({userId})
-    .setProtectedHeader({alg:"HS256"})
-    .setIssuedAt()
-    .setExpirationTime("7d")
-    .sign(getSecret());
-  (await cookies()).set("session",token,{
+  const token=randomBytes(32).toString("hex");
+  const expiresAt=new Date(Date.now()+MAX_AGE*1000);
+
+  await db.session.deleteMany({
+    where:{expiresAt:{lt:new Date()}}
+  });
+
+  await db.session.create({
+    data:{userId,tokenHash:hashToken(token),expiresAt}
+  });
+
+  (await cookies()).set(COOKIE,token,{
     httpOnly:true,
     sameSite:"lax",
     secure:process.env.NODE_ENV==="production",
-    maxAge:604800,
+    maxAge:MAX_AGE,
     path:"/"
   });
 }
 
 export async function getUser(){
-  const token=(await cookies()).get("session")?.value;
+  const token=(await cookies()).get(COOKIE)?.value;
   if(!token)return null;
-  try{
-    const {payload}=await jwtVerify(token,getSecret());
-    if(typeof payload.userId!=="string")return null;
-    return db.user.findUnique({where:{id:payload.userId}});
-  }catch{return null}
+
+  const session=await db.session.findUnique({
+    where:{tokenHash:hashToken(token)},
+    include:{user:true}
+  });
+
+  if(!session)return null;
+
+  if(session.expiresAt.getTime()<=Date.now()){
+    await db.session.delete({where:{id:session.id}}).catch(()=>{});
+    return null;
+  }
+
+  if(session.user.status!=="ACTIVE")return null;
+  return session.user;
 }
 
 export async function clearSession(){
-  (await cookies()).delete("session")
+  const token=(await cookies()).get(COOKIE)?.value;
+  if(token){
+    await db.session.deleteMany({where:{tokenHash:hashToken(token)}});
+  }
+  (await cookies()).set(COOKIE,"",{
+    httpOnly:true,
+    sameSite:"lax",
+    secure:process.env.NODE_ENV==="production",
+    maxAge:0,
+    expires:new Date(0),
+    path:"/"
+  });
 }
