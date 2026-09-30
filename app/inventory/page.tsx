@@ -1,12 +1,1 @@
-import { redirect } from "next/navigation";
-import { getUser } from "../../lib/auth";
-
-export default async function Inventory() {
-  if (!(await getUser())) redirect("/login");
-  return (
-    <>
-      <h1>Inventory</h1>
-      <div className="card">Inventory management area.</div>
-    </>
-  );
-}
+import {getUser} from "../../lib/auth";import {db} from "../../lib/prisma";import {redirect} from "next/navigation";export default async function Inventory(){const u=await getUser();if(!u||u.role==="USER")redirect("/dashboard");const[stocks,users,orders]=await Promise.all([db.stock.count(),db.user.count(),db.order.count()]);return <><div className="topbar"><div><p className="eyebrow">Administration</p><h1>Inventory</h1><p className="muted">Operational counts for the configured marketplace.</p></div></div><div className="grid3"><div className="card stat"><span className="muted">Stock instruments</span><div className="value">{stocks}</div></div><div className="card stat"><span className="muted">Users</span><div className="value">{users}</div></div><div className="card stat"><span className="muted">Orders</span><div className="value">{orders}</div></div></div><div style={{height:16}}/><div className="card"><div className="notice">The database exposes stock records, but this build does not yet define a physical-inventory workflow. This page therefore reports inventory-related counts instead of pretending to manage unavailable business rules.</div></div></>}
