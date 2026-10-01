@@ -1,0 +1,15 @@
+import {cookies} from "next/headers";
+import {createHash,randomBytes} from "crypto";
+import {db} from "./prisma";
+const ADMIN_COOKIE="admin_session";
+const CHALLENGE_COOKIE="admin_challenge";
+const SESSION_SECONDS=8*60*60;
+const CHALLENGE_SECONDS=10*60;
+const hash=(v:string)=>createHash("sha256").update(v).digest("hex");
+async function setCookie(name:string,value:string,maxAge:number){(await cookies()).set(name,value,{httpOnly:true,sameSite:"strict",secure:process.env.NODE_ENV==="production",maxAge,expires:new Date(Date.now()+maxAge*1000),path:"/"});}
+export async function createAdminChallenge(userId:string,purpose:string,pendingSecret?:string){await db.adminChallenge.deleteMany({where:{OR:[{expiresAt:{lt:new Date()}},{userId}]}});const token=randomBytes(32).toString("hex");await db.adminChallenge.create({data:{userId,purpose,pendingSecret,tokenHash:hash(token),expiresAt:new Date(Date.now()+CHALLENGE_SECONDS*1000)}});await setCookie(CHALLENGE_COOKIE,token,CHALLENGE_SECONDS);}
+export async function getAdminChallenge(){const token=(await cookies()).get(CHALLENGE_COOKIE)?.value;if(!token)return null;const c=await db.adminChallenge.findUnique({where:{tokenHash:hash(token)},include:{user:true}});if(!c||c.expiresAt.getTime()<=Date.now()){if(c)await db.adminChallenge.delete({where:{id:c.id}}).catch(()=>{});return null;}return c;}
+export async function clearAdminChallenge(){const token=(await cookies()).get(CHALLENGE_COOKIE)?.value;if(token)await db.adminChallenge.deleteMany({where:{tokenHash:hash(token)}});(await cookies()).set(CHALLENGE_COOKIE,"",{httpOnly:true,sameSite:"strict",secure:process.env.NODE_ENV==="production",maxAge:0,expires:new Date(0),path:"/"});}
+export async function createAdminSession(userId:string){await db.adminSession.deleteMany({where:{OR:[{expiresAt:{lt:new Date()}},{userId}]}});const token=randomBytes(32).toString("hex");await db.adminSession.create({data:{userId,tokenHash:hash(token),expiresAt:new Date(Date.now()+SESSION_SECONDS*1000)}});await setCookie(ADMIN_COOKIE,token,SESSION_SECONDS);}
+export async function getAdminUser(){const token=(await cookies()).get(ADMIN_COOKIE)?.value;if(!token)return null;const s=await db.adminSession.findUnique({where:{tokenHash:hash(token)},include:{user:true}});if(!s||s.expiresAt.getTime()<=Date.now()||s.user.status!=="ACTIVE"||s.user.role==="USER"){if(s)await db.adminSession.delete({where:{id:s.id}}).catch(()=>{});return null;}return s.user;}
+export async function clearAdminSession(){const token=(await cookies()).get(ADMIN_COOKIE)?.value;if(token)await db.adminSession.deleteMany({where:{tokenHash:hash(token)}});(await cookies()).set(ADMIN_COOKIE,"",{httpOnly:true,sameSite:"strict",secure:process.env.NODE_ENV==="production",maxAge:0,expires:new Date(0),path:"/"});}
