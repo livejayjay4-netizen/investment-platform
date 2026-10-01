@@ -1,12 +1,1 @@
-import { redirect } from "next/navigation";
-import { getUser } from "../../lib/auth";
-
-export default async function Investments() {
-  if (!(await getUser())) redirect("/login");
-  return (
-    <>
-      <h1>Investments</h1>
-      <div className="card">Investment positions and plans.</div>
-    </>
-  );
-}
+import {redirect} from "next/navigation";import {getUser} from "../../lib/auth";const plans=[["Core Equity","Diversified public-company exposure","Long-term growth"],["Income & Stability","Illustrative income-oriented allocation","Income focus"],["Growth","Illustrative higher-growth allocation","Capital appreciation"]];export default async function Investments(){if(!(await getUser()))redirect("/login");return <><div className="topbar"><div><p className="eyebrow">Investment library</p><h1>Investments</h1><p className="muted">Explore investment concepts and allocation categories before committing capital.</p></div></div><div className="notice">These categories are educational/reference content in the current platform. They are not live investment products, offers, or guaranteed-return plans.</div><div className="grid" style={{marginTop:18}}>{plans.map(([name,desc,focus])=><div className="card" key={name}><span className="badge">{focus}</span><h2>{name}</h2><p>{desc}</p><div className="mini"><span className="muted">Risk note</span><p>Returns and losses depend on the underlying assets and market conditions.</p></div><a className="btn secondary" href="/stocks">View instruments</a></div>)}</div></>}
