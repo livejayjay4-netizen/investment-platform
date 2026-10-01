@@ -170,6 +170,29 @@ model Holding {
   @@unique([userId, stockId])
 }
 
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  brand       String
+  category    String
+  description String
+  price       Decimal? @db.Decimal(18, 2)
+  currency    String   @default("USD")
+  imageUrl    String
+  sourceUrl   String
+  imageCredit String?
+  imageLicense String?
+  priceLabel  String?
+  active      Boolean  @default(true)
+  featured    Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  @@index([brand])
+  @@index([category])
+  @@index([active, featured])
+}
+
 model SupportTicket {
   id        String   @id @default(cuid())
   userId    String
