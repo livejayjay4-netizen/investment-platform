@@ -1,12 +1,1 @@
-import { redirect } from "next/navigation";
-import { getUser } from "../../lib/auth";
-
-export default async function InvestmentDashboard() {
-  if (!(await getUser())) redirect("/login");
-  return (
-    <>
-      <h1>Investment Dashboard</h1>
-      <div className="card">Performance and allocation dashboard.</div>
-    </>
-  );
-}
+import {redirect} from "next/navigation";import {getUser} from "../../lib/auth";import {db} from "../../lib/prisma";export default async function InvestmentDashboard(){const u=await getUser();if(!u)redirect("/login");const h=await db.holding.findMany({where:{userId:u.id},include:{stock:true}});const total=h.reduce((a,x)=>a+Number(x.quantity)*Number(x.stock.price),0);const rows=h.map(x=>({id:x.id,symbol:x.stock.symbol,value:Number(x.quantity)*Number(x.stock.price)})).sort((a,b)=>b.value-a.value);return <><div className="topbar"><div><p className="eyebrow">Portfolio intelligence</p><h1>Analytics</h1><p className="muted">Allocation and position-level metrics based on your recorded holdings.</p></div></div><div className="grid"><div className="card stat"><span className="muted">Portfolio value</span><div className="value">${total.toFixed(2)}</div></div><div className="card stat"><span className="muted">Assets</span><div className="value">{h.length}</div></div><div className="card stat"><span className="muted">Largest position</span><div className="value">{rows[0]?.symbol||"—"}</div></div><div className="card stat"><span className="muted">Largest allocation</span><div className="value">{rows.length&&total?((rows[0].value/total)*100).toFixed(1)+"%":"—"}</div></div></div><div style={{height:18}}/><div className="card"><h2>Allocation</h2>{rows.length?rows.map(r=>{const pct=total?r.value/total*100:0;return <div key={r.id} style={{margin:"18px 0"}}><div style={{display:"flex",justifyContent:"space-between"}}><b>{r.symbol}</b><span>{pct.toFixed(1)}%</span></div><div style={{height:9,borderRadius:9,background:"var(--line)",marginTop:8,overflow:"hidden"}}><div style={{width:pct+"%",height:"100%",background:"var(--brand)"}}/></div></div>}):<div className="empty">No holdings to analyze yet.</div>}</div><div className="notice" style={{marginTop:18}}>Historical price series, benchmarks, volatility and independently calculated performance history are not connected yet.</div></>}
