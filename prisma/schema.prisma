@@ -184,6 +184,7 @@ model Product {
   imageCredit String?
   imageLicense String?
   priceLabel  String?
+  downPayment Decimal? @db.Decimal(18, 2)
   active      Boolean  @default(true)
   featured    Boolean  @default(false)
   updatedAt   DateTime @updatedAt
