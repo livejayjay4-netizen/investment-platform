@@ -9,9 +9,10 @@ async function main(){
   const email=(process.env.ADMIN_EMAIL||"admin@example.com").trim().toLowerCase();
   const hash=await bcrypt.hash(pw,12);
 
+  const resetAdmin2FA=process.env.RESET_ADMIN_2FA==="true";
   await db.user.upsert({
     where:{email},
-    update:{passwordHash:hash,role:Role.ADMIN},
+    update:{passwordHash:hash,role:Role.ADMIN,...(resetAdmin2FA?{totpSecret:null,totpEnabled:false}:{})},
     create:{email,fullName:"Platform Administrator",passwordHash:hash,role:Role.ADMIN,wallet:{create:{}}}
   });
 
