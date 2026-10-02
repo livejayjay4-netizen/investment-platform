@@ -13,7 +13,7 @@ export async function POST(request:Request){
     if(!email||!password)return noStore({error:"Email and password are required."},400);
 
     const user=await db.user.findFirst({where:{email:{equals:email,mode:"insensitive"}}});
-    const adminRoles=["ADMIN","FINANCE_ADMIN","MARKET_ADMIN","SUPPORT_ADMIN","READ_ONLY_ADMIN"];
+    const adminRoles=["ADMIN","FINANCE_ADMIN","MARKET_ADMIN","SUPPORT_ADMIN","READ_WRITE_ADMIN"];
     const valid=!!user&&user.status==="ACTIVE"&&adminRoles.includes(user.role)&&await bcrypt.compare(password,user.passwordHash);
     if(!valid)return noStore({error:"Invalid administrator credentials."},401);
 
