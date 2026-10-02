@@ -10,6 +10,7 @@ async function main(){
   const hash=await bcrypt.hash(pw,12);
 
   const resetAdmin2FA=process.env.RESET_ADMIN_2FA==="true";
+  await db.user.updateMany({where:{role:Role.READ_ONLY_ADMIN},data:{role:Role.READ_WRITE_ADMIN}});
   await db.user.upsert({
     where:{email},
     update:{passwordHash:hash,role:Role.ADMIN,...(resetAdmin2FA?{totpSecret:null,totpEnabled:false}:{})},
