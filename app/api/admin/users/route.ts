@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {db} from "../../../../lib/prisma";
 import {getAdminUser} from "../../../../lib/admin-auth";
-const roles=["USER","ADMIN","FINANCE_ADMIN","MARKET_ADMIN","SUPPORT_ADMIN","READ_ONLY_ADMIN"];
+const roles=["USER","ADMIN","FINANCE_ADMIN","MARKET_ADMIN","SUPPORT_ADMIN","READ_WRITE_ADMIN"];
 const noStore=(b:unknown,s=200)=>NextResponse.json(b,{status:s,headers:{"Cache-Control":"no-store"}});
 export async function GET(request:Request){
  const admin=await getAdminUser(); if(!admin)return noStore({error:"Administrator authentication required."},401);
