@@ -6,17 +6,27 @@ const noStore=(b:unknown,s=200)=>NextResponse.json(b,{status:s,headers:{"Cache-C
 export async function GET(_request:Request,ctx:{params:Promise<{id:string}>}){
  const admin=await getAdminUser(); if(!admin)return noStore({error:"Administrator authentication required."},401);
  const {id}=await ctx.params;
- const u=await db.user.findUnique({where:{id},include:{wallet:true,transactions:{orderBy:{createdAt:"desc"},take:50},orders:{include:{stock:true},orderBy:{createdAt:"desc"},take:50},holdings:{include:{stock:true}},tickets:{orderBy:{createdAt:"desc"},take:30},sessions:{orderBy:{createdAt:"desc"}},adminSessions:{orderBy:{createdAt:"desc"}}});
+ const u=await db.user.findUnique({where:{id}});
  if(!u)return noStore({error:"User not found."},404);
- const wallet = u.wallet ? {id:u.wallet.id,balance:Number(u.wallet.balance),availableBalance:Number(u.wallet.availableBalance)} : null;
+ const [wallet,transactions,orders,holdings,tickets,sessions,adminSessions]=await Promise.all([
+  db.wallet.findUnique({where:{userId:id}}),
+  db.walletTransaction.findMany({where:{userId:id},orderBy:{createdAt:"desc"},take:50}),
+  db.order.findMany({where:{userId:id},include:{stock:true},orderBy:{createdAt:"desc"},take:50}),
+  db.holding.findMany({where:{userId:id},include:{stock:true}}),
+  db.supportTicket.findMany({where:{userId:id},orderBy:{createdAt:"desc"},take:30}),
+  db.session.findMany({where:{userId:id},orderBy:{createdAt:"desc"}}),
+  db.adminSession.findMany({where:{userId:id},orderBy:{createdAt:"desc"}})
+ ]);
+ if(!u)return noStore({error:"User not found."},404);
+ const walletView = wallet ? {id:wallet.id,balance:Number(wallet.balance),availableBalance:Number(wallet.availableBalance)} : null;
  const user={id:u.id,fullName:u.fullName,email:u.email,role:u.role,status:u.status,totpEnabled:u.totpEnabled,createdAt:u.createdAt,updatedAt:u.updatedAt,
   wallet,
   transactions:u.transactions.map(t=>({id:t.id,type:t.type,amount:Number(t.amount),fee:Number(t.fee),status:t.status,method:t.method,reference:t.reference,createdAt:t.createdAt})),
-  orders:u.orders.map(o=>({id:o.id,side:o.side,quantity:Number(o.quantity),price:Number(o.price),total:Number(o.total),status:o.status,createdAt:o.createdAt,stock:o.stock?{symbol:o.stock.symbol,name:o.stock.name}:null})),
-  holdings:u.holdings.map(h=>({id:h.id,quantity:Number(h.quantity),averagePrice:Number(h.averagePrice),updatedAt:h.updatedAt,stock:h.stock?{symbol:h.stock.symbol,name:h.stock.name}:null})),
-  tickets:u.tickets,
-  sessions:u.sessions.map(s=>({id:s.id,createdAt:s.createdAt,expiresAt:s.expiresAt})),
-  adminSessions:u.adminSessions.map(s=>({id:s.id,createdAt:s.createdAt,expiresAt:s.expiresAt}))
+  orders:orders.map(o=>({id:o.id,side:o.side,quantity:Number(o.quantity),price:Number(o.price),total:Number(o.total),status:o.status,createdAt:o.createdAt,stock:o.stock?{symbol:o.stock.symbol,name:o.stock.name}:null})),
+  holdings:holdings.map(h=>({id:h.id,quantity:Number(h.quantity),averagePrice:Number(h.averagePrice),updatedAt:h.updatedAt,stock:h.stock?{symbol:h.stock.symbol,name:h.stock.name}:null})),
+  tickets,
+  sessions:sessions.map(s=>({id:s.id,createdAt:s.createdAt,expiresAt:s.expiresAt})),
+  adminSessions:adminSessions.map(s=>({id:s.id,createdAt:s.createdAt,expiresAt:s.expiresAt}))
  };
  return noStore({user});
 }
