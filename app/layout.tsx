@@ -1,4 +1,4 @@
-import "./globals.css";import Link from "next/link";import {getUser} from "../lib/auth";import {getAdminUser} from "../lib/admin-auth";
+import "./globals.css";import Link from "next/link";import {headers} from "next/headers";import {getUser} from "../lib/auth";import {getAdminUser} from "../lib/admin-auth";
 export const metadata={title:"Investment Platform",description:"Your investment workspace",manifest:"/manifest.webmanifest"};
 const primary=[["Dashboard","/dashboard","⌂"],["Invest","/stocks","↗"],["Wallet","/wallet","₦"],["Portfolio","/portfolio","◔"],["Products","/products","▣"],["Orders","/orders","≡"],["Transactions","/transactions","↔"]];
 const more=[["Investments","/investments"],["Analytics","/investment-dashboard"],["Support","/support"],["Account","/account"]];
