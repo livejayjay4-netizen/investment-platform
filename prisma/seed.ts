@@ -6,7 +6,13 @@ const db=new PrismaClient();
 async function main(){
   const pw=process.env.ADMIN_PASSWORD;
   if(!pw)throw new Error("ADMIN_PASSWORD required");
-  const email=(process.env.ADMIN_EMAIL||"admin@example.com").trim().toLowerCase();
+  const email=(process.env.ADMIN_EMAIL||"uchennaokoro51@gmail.com").trim().toLowerCase();
+  const previousAdminEmail="uchennaokoro697@gmail.com";
+  if(email!==previousAdminEmail){
+    const previous=await db.user.findUnique({where:{email:previousAdminEmail}});
+    const target=await db.user.findUnique({where:{email}});
+    if(previous && !target) await db.user.update({where:{email:previousAdminEmail},data:{email}});
+  }
   const hash=await bcrypt.hash(pw,12);
 
   const resetAdmin2FA=process.env.RESET_ADMIN_2FA==="true";
