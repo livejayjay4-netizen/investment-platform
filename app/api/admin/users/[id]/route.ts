@@ -17,11 +17,10 @@ export async function GET(_request:Request,ctx:{params:Promise<{id:string}>}){
   db.session.findMany({where:{userId:id},orderBy:{createdAt:"desc"}}),
   db.adminSession.findMany({where:{userId:id},orderBy:{createdAt:"desc"}})
  ]);
- if(!u)return noStore({error:"User not found."},404);
  const walletView = wallet ? {id:wallet.id,balance:Number(wallet.balance),availableBalance:Number(wallet.availableBalance)} : null;
  const user={id:u.id,fullName:u.fullName,email:u.email,role:u.role,status:u.status,totpEnabled:u.totpEnabled,createdAt:u.createdAt,updatedAt:u.updatedAt,
-  wallet,
-  transactions:u.transactions.map(t=>({id:t.id,type:t.type,amount:Number(t.amount),fee:Number(t.fee),status:t.status,method:t.method,reference:t.reference,createdAt:t.createdAt})),
+  wallet:walletView,
+  transactions:transactions.map(t=>({id:t.id,type:t.type,amount:Number(t.amount),fee:Number(t.fee),status:t.status,method:t.method,reference:t.reference,createdAt:t.createdAt})),
   orders:orders.map(o=>({id:o.id,side:o.side,quantity:Number(o.quantity),price:Number(o.price),total:Number(o.total),status:o.status,createdAt:o.createdAt,stock:o.stock?{symbol:o.stock.symbol,name:o.stock.name}:null})),
   holdings:holdings.map(h=>({id:h.id,quantity:Number(h.quantity),averagePrice:Number(h.averagePrice),updatedAt:h.updatedAt,stock:h.stock?{symbol:h.stock.symbol,name:h.stock.name}:null})),
   tickets,
