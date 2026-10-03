@@ -24,10 +24,10 @@ async function main(){
   });
 
   const rows=[
-    ["AAPL","Apple",226.96,.84],["META","Meta Platforms",746.98,1.21],["TSLA","Tesla",442.79,-.42],
-    ["GOOGL","Alphabet",256.09,.64],["NVDA","NVIDIA",185.48,1.34],["JPM","JPMorgan Chase",310.45,.37],
-    ["JNJ","Johnson & Johnson",175.12,-.18],["MSFT","Microsoft",510.78,.92],["AMZN","Amazon",231.45,.58],
-    ["NFLX","Netflix",1194.3,.73]
+    ["AAPL","Apple",333.69,1.02],["META","Meta Platforms",728.08,.30],["TSLA","Tesla",370.59,4.65],
+    ["GOOGL","Alphabet",343.50,1.56],["NVDA","NVIDIA",233.95,1.34],["JPM","JPMorgan Chase",332.38,-.24],
+    ["JNJ","Johnson & Johnson",256.03,-1.02],["MSFT","Microsoft",517.53,.92],["AMZN","Amazon",251.52,1.33],
+    ["NFLX","Netflix",67.06,-1.16]
   ];
   for(const x of rows){
     await db.stock.upsert({
