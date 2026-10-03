@@ -33,7 +33,26 @@ export async function PATCH(request:Request,ctx:{params:Promise<{id:string}>}){
  const admin=await getAdminUser(); if(!admin)return noStore({error:"Administrator authentication required."},401);
  const {id}=await ctx.params; const body=await request.json().catch(()=>null); const u=await db.user.findUnique({where:{id}});
  if(!u)return noStore({error:"User not found."},404);
- const action=body?.action;\n if(!action){\n  const data:any={};\n  if(typeof body?.fullName==="string"&&body.fullName.trim().length>=2)data.fullName=body.fullName.trim();\n  if(typeof body?.email==="string"&&/^\\S+@\\S+\\.\\S+$/.test(body.email.trim()))data.email=body.email.trim().toLowerCase();\n  if(typeof body?.status==="string"&&["ACTIVE","SUSPENDED","LOCKED"].includes(body.status))data.status=body.status;\n  if(typeof body?.role==="string"&&["USER","ADMIN","FINANCE_ADMIN","MARKET_ADMIN","SUPPORT_ADMIN","READ_WRITE_ADMIN"].includes(body.role)&&admin.role==="ADMIN")data.role=body.role;\n  if(!Object.keys(data).length)return noStore({error:"No permitted account changes supplied."},400);\n  if(id===admin.id&&data.status&&data.status!=="ACTIVE")return noStore({error:"You cannot deactivate your own administrator account."},400);\n  const before=await db.user.findUnique({where:{id}});\n  if(!before)return noStore({error:"User not found."},404);\n  try{const updated=await db.user.update({where:{id},data});await db.auditLog.create({data:{actorId:admin.id,action:"ADMIN_UPDATE_USER",targetType:"User",targetId:id,metadata:JSON.stringify({changed:Object.keys(data),before:{email:before.email,status:before.status,role:before.role},after:{email:updated.email,status:updated.status,role:updated.role}})}});return noStore({ok:true,message:"Account changes saved.",user:{id:updated.id,fullName:updated.fullName,email:updated.email,role:updated.role,status:updated.status}})}catch(error:any){if(error?.code==="P2002")return noStore({error:"That email address is already in use."},409);return noStore({error:"Unable to update this user account."},500)}\n }
+ const action=body?.action;
+ if(!action){
+  const data:any={};
+  if(typeof body?.fullName==="string"&&body.fullName.trim().length>=2)data.fullName=body.fullName.trim();
+  if(typeof body?.email==="string"&&/^\S+@\S+\.\S+$/.test(body.email.trim()))data.email=body.email.trim().toLowerCase();
+  if(typeof body?.status==="string"&&["ACTIVE","SUSPENDED","LOCKED"].includes(body.status))data.status=body.status;
+  if(typeof body?.role==="string"&&["USER","ADMIN","FINANCE_ADMIN","MARKET_ADMIN","SUPPORT_ADMIN","READ_WRITE_ADMIN"].includes(body.role)&&admin.role==="ADMIN")data.role=body.role;
+  if(!Object.keys(data).length)return noStore({error:"No permitted account changes supplied."},400);
+  if(id===admin.id&&data.status&&data.status!=="ACTIVE")return noStore({error:"You cannot deactivate your own administrator account."},400);
+  const before=await db.user.findUnique({where:{id}});
+  if(!before)return noStore({error:"User not found."},404);
+  try{
+   const updated=await db.user.update({where:{id},data});
+   await db.auditLog.create({data:{actorId:admin.id,action:"ADMIN_UPDATE_USER",targetType:"User",targetId:id,metadata:JSON.stringify({changed:Object.keys(data),before:{email:before.email,status:before.status,role:before.role},after:{email:updated.email,status:updated.status,role:updated.role}})}});
+   return noStore({ok:true,message:"Account changes saved.",user:{id:updated.id,fullName:updated.fullName,email:updated.email,role:updated.role,status:updated.status}});
+  }catch(error:any){
+   if(error?.code==="P2002")return noStore({error:"That email address is already in use."},409);
+   return noStore({error:"Unable to update this user account."},500);
+  }
+ }
  if(action==="reset-password"){
   if(!["ADMIN","SUPPORT_ADMIN"].includes(admin.role))return noStore({error:"Not authorized to reset passwords."},403);
   const p=typeof body.password==="string"?body.password:""; if(p.length<8||p.length>128)return noStore({error:"Password must be 8-128 characters."},400);
