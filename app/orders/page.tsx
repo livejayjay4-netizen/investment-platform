@@ -1,12 +1,2 @@
-import { redirect } from "next/navigation";
-import { getUser } from "../../lib/auth";
-
-export default async function Orders() {
-  if (!(await getUser())) redirect("/login");
-  return (
-    <>
-      <h1>Orders</h1>
-      <div className="card">Buy and sell orders.</div>
-    </>
-  );
-}
+import {redirect} from "next/navigation";import {getUser} from "../../lib/auth";import {db} from "../../lib/prisma";import Link from "next/link";
+export default async function Orders(){const u=await getUser();if(!u)redirect("/login");const orders=await db.order.findMany({where:{userId:u.id},include:{stock:true},orderBy:{createdAt:"desc"}});return <><div className="topbar"><div><p className="eyebrow">Trading activity</p><h1>Orders</h1><p className="muted">Review every buy and sell order recorded on your account.</p></div><Link className="btn" href="/stocks">Create order</Link></div><div className="card"><div className="table-wrap"><table className="table"><thead><tr><th>Date</th><th>Asset</th><th>Side</th><th>Quantity</th><th>Price</th><th>Total</th><th>Status</th></tr></thead><tbody>{orders.length?orders.map(o=><tr key={o.id}><td>{o.createdAt.toLocaleString()}</td><td><b>{o.stock.symbol}</b><br/><span className="muted">{o.stock.name}</span></td><td>{o.side}</td><td>{Number(o.quantity)}</td><td>${Number(o.price).toFixed(2)}</td><td>${Number(o.total).toFixed(2)}</td><td><span className="badge">{o.status}</span></td></tr>):<tr><td colSpan={7}><div className="empty"><strong>No orders yet</strong><p>Your submitted market orders will appear here.</p><Link className="btn" href="/stocks">Browse stocks</Link></div></td></tr>}</tbody></table></div></div></>}
