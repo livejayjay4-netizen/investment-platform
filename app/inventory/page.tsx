@@ -1,1 +1,22 @@
-import {getUser} from "../../lib/auth";import {db} from "../../lib/prisma";import {redirect} from "next/navigation";export default async function Inventory(){const u=await getUser();if(!u||u.role==="USER")redirect("/dashboard");const[stocks,users,orders]=await Promise.all([db.stock.count(),db.user.count(),db.order.count()]);return <><div className="topbar"><div><p className="eyebrow">Administration</p><h1>Inventory</h1><p className="muted">Operational counts for the configured marketplace.</p></div></div><div className="grid3"><div className="card stat"><span className="muted">Stock instruments</span><div className="value">{stocks}</div></div><div className="card stat"><span className="muted">Users</span><div className="value">{users}</div></div><div className="card stat"><span className="muted">Orders</span><div className="value">{orders}</div></div></div><div style={{height:16}}/><div className="card"><div className="notice">The database exposes stock records, but this build does not yet define a physical-inventory workflow. This page therefore reports inventory-related counts instead of pretending to manage unavailable business rules.</div></div></>}
+import {redirect} from "next/navigation";
+import {getUser} from "../../lib/auth";
+import {db} from "../../lib/prisma";
+import ProductsBrowser from "../../components/ProductsBrowser";
+
+export default async function Inventory(){
+  if(!(await getUser())) redirect("/login");
+  const products=await db.product.findMany({
+    where:{active:true},
+    orderBy:[{featured:"desc"},{createdAt:"desc"}]
+  });
+  return <ProductsBrowser
+    title="Browse Inventory"
+    subtitle="Explore premium electric vehicles and current reference listings."
+    products={products.map(p=>({
+      id:p.id,name:p.name,brand:p.brand,category:p.category,description:p.description,
+      price:p.price?Number(p.price):null,currency:p.currency,imageUrl:p.imageUrl,sourceUrl:p.sourceUrl,
+      imageCredit:p.imageCredit,imageLicense:p.imageLicense,priceLabel:p.priceLabel,
+      downPayment:p.downPayment?Number(p.downPayment):null
+    }))}
+  />;
+}
