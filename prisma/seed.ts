@@ -29,11 +29,12 @@ async function main(){
     ["JNJ","Johnson & Johnson",256.03,-1.02],["MSFT","Microsoft",517.53,.92],["AMZN","Amazon",251.52,1.33],
     ["NFLX","Netflix",67.06,-1.16]
   ];
+  const sectors:Record<string,string>={AAPL:"Technology",META:"Communication Services",TSLA:"Consumer Cyclical",GOOGL:"Communication Services",NVDA:"Technology",JPM:"Financial Services",JNJ:"Healthcare",MSFT:"Technology",AMZN:"Consumer Cyclical",NFLX:"Communication Services"};
   for(const x of rows){
     await db.stock.upsert({
       where:{symbol:x[0] as string},
-      update:{name:x[1] as string,price:Number(x[2]),changePercent:Number(x[3])},
-      create:{symbol:x[0] as string,name:x[1] as string,price:Number(x[2]),changePercent:Number(x[3])}
+      update:{name:x[1] as string,price:Number(x[2]),changePercent:Number(x[3]),sector:sectors[x[0] as string]},
+      create:{symbol:x[0] as string,name:x[1] as string,price:Number(x[2]),changePercent:Number(x[3]),sector:sectors[x[0] as string]}
     });
   }
 
