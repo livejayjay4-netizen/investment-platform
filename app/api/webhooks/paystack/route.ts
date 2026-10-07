@@ -20,6 +20,14 @@ export async function POST(req: NextRequest) {
     try {
       const verified = await verifyPaystack(reference);
       const tx = await db.walletTransaction.findUnique({ where: { reference } });
+      const purchase = await db.productPurchase.findUnique({ where: { paymentReference: reference } });
+      if (purchase) {
+        const expected = Number(purchase.downPayment || purchase.amount);
+        if (verified.status === "success" && verified.reference === reference && verified.currency === "USD" && Number(verified.amount) === Math.round(expected * 100)) {
+          await db.productPurchase.updateMany({ where: { id: purchase.id, paymentStatus: { not: "PAID" } }, data: { paymentStatus: "PAID", status: "REVIEWING" } });
+          await db.auditLog.create({ data: { actorId: purchase.userId, action: "VEHICLE_PAYMENT_CONFIRMED_WEBHOOK", targetType: "ProductPurchase", targetId: purchase.id, metadata: JSON.stringify({ reference, amount: expected, currency: "USD" }) } });
+        }
+      }
       if (tx && tx.type === "DEPOSIT" && tx.status !== "COMPLETED") {
         if (
           verified.status === "success" &&
