@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     try {
       const verified = await verifyPaystack(reference);
       const tx = await db.walletTransaction.findUnique({ where: { reference } });
-      const purchase = await db.productPurchase.findUnique({ where: { paymentReference: reference } });
+      const purchase = await db.productPurchase.findFirst({ where: { paymentReference: reference } });
       if (purchase) {
         const expected = Number(purchase.downPayment || purchase.amount);
         if (verified.status === "success" && verified.reference === reference && verified.currency === "USD" && Number(verified.amount) === Math.round(expected * 100)) {
