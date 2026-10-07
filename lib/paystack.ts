@@ -18,6 +18,7 @@ export async function initializePaystack(input: {
   amount: number;
   reference: string;
   callbackUrl: string;
+  currency?: string;
 }) {
   const response = await fetch(`${BASE_URL}/transaction/initialize`, {
     method: "POST",
@@ -28,7 +29,7 @@ export async function initializePaystack(input: {
     body: JSON.stringify({
       email: input.email,
       amount: Math.round(input.amount * 100),
-      currency: paystackCurrency(),
+      currency: (input.currency || paystackCurrency()).toUpperCase(),
       reference: input.reference,
       callback_url: input.callbackUrl,
     }),
