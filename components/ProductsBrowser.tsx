@@ -3,7 +3,7 @@ import {useMemo,useState} from "react";
 import Link from "next/link";
 type Product={id:string;name:string;brand:string;category:string;description:string;price:number|null;currency:string;imageUrl:string;priceLabel:string|null;downPayment:number|null;modelYear:number|null;trim:string|null;exteriorColor:string|null;drivetrain:string|null;rangeMiles:number|null;availableColors:string[];stockQuantity:number};
 const money=(n:number,c:string)=>new Intl.NumberFormat("en-US",{style:"currency",currency:c,maximumFractionDigits:0}).format(n);
-export default function ProductsBrowser({products,title="Inventory",subtitle="Browse available Tesla vehicles and request a purchase."}:{products:Product[];title?:string;subtitle?:string}){
+export default function ProductsBrowser({products,title="Inventory",subtitle="Browse available Tesla and Starlink products and request a purchase."}:{products:Product[];title?:string;subtitle?:string}){
  const[q,setQ]=useState("");const[category,setCategory]=useState("All");const categories=["All",...Array.from(new Set(products.map(p=>p.category)))];
  const filtered=useMemo(()=>products.filter(p=>(category==="All"||p.category===category)&&[p.name,p.brand,p.category,p.description].join(" ").toLowerCase().includes(q.toLowerCase())),[products,q,category]);
  return <><div className="topbar"><div><p className="eyebrow">Tesla inventory</p><h1>{title}</h1><p className="muted">{subtitle}</p></div><Link className="btn secondary" href="/purchases">My purchases</Link></div>
