@@ -1,4 +1,4 @@
-import "./globals.css";import Link from "next/link";import {getUser} from "../lib/auth";import {getAdminUser} from "../lib/admin-auth";import MobileNavigation from "../components/MobileNavigation";import Brand from "../components/Brand";
+import "./globals.css";import "./elite.css";import Link from "next/link";import {getUser} from "../lib/auth";import {getAdminUser} from "../lib/admin-auth";import MobileNavigation from "../components/MobileNavigation";import Brand from "../components/Brand";
 export const metadata={title:"Elite Auto Investment",description:"Private capital and premium automotive investment workspace",manifest:"/manifest.webmanifest"};
 const primary=[["Dashboard","/dashboard","⌂"],["Markets","/stocks","↗"],["Auto Collection","/inventory","◇"],["Wallet","/wallet","$"],["Portfolio","/portfolio","◔"],["Purchases","/purchases","✓"],["Orders","/orders","≡"],["Transactions","/transactions","↔"]];
 const more=[["Investments","/investments"],["Analytics","/investment-dashboard"],["Support","/support"],["Account","/account"]];
