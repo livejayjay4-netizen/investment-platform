@@ -3,6 +3,9 @@ const BASE_URL = "https://api.paystack.co";
 function secret() {
   const value = process.env.PAYSTACK_SECRET_KEY;
   if (!value) throw new Error("PAYSTACK_SECRET_KEY is not configured.");
+  const mode = (process.env.PAYSTACK_MODE || "live").toLowerCase();
+  if (mode === "live" && value.startsWith("sk_test_")) throw new Error("Live mode requires a Paystack live secret key.");
+  if (mode === "test" && value.startsWith("sk_live_")) throw new Error("Test mode requires a Paystack test secret key.");
   return value;
 }
 
