@@ -186,6 +186,14 @@ model Product {
   imageLicense String?
   priceLabel  String?
   downPayment Decimal? @db.Decimal(18, 2)
+  modelYear   Int?
+  trim        String?
+  exteriorColor String?
+  interiorColor String?
+  drivetrain  String?
+  rangeMiles  Int?
+  stockQuantity Int @default(5)
+  availability String @default("AVAILABLE")
   active      Boolean  @default(true)
   featured    Boolean  @default(false)
   updatedAt   DateTime @updatedAt
@@ -224,6 +232,9 @@ model SupportTicket {
   subject   String
   message   String
   status    String   @default("OPEN")
+  adminReply String?
+  assignedTo String?
+  updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
