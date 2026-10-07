@@ -8,7 +8,7 @@ export async function GET(_request:Request,ctx:{params:Promise<{id:string}>}){
  const {id}=await ctx.params;
  const u=await db.user.findUnique({where:{id}});
  if(!u)return noStore({error:"User not found."},404);
- const [wallet,transactions,orders,holdings,tickets,sessions,adminSessions]=await Promise.all([
+ const [wallet,transactions,orders,holdings,tickets,sessions,adminSessions,purchases]=await Promise.all([
   db.wallet.findUnique({where:{userId:id}}),
   db.walletTransaction.findMany({where:{userId:id},orderBy:{createdAt:"desc"},take:50}),
   db.order.findMany({where:{userId:id},include:{stock:true},orderBy:{createdAt:"desc"},take:50}),
