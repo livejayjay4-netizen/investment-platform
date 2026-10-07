@@ -15,7 +15,8 @@ export async function GET(_request:Request,ctx:{params:Promise<{id:string}>}){
   db.holding.findMany({where:{userId:id},include:{stock:true}}),
   db.supportTicket.findMany({where:{userId:id},orderBy:{createdAt:"desc"},take:30}),
   db.session.findMany({where:{userId:id},orderBy:{createdAt:"desc"}}),
-  db.adminSession.findMany({where:{userId:id},orderBy:{createdAt:"desc"}})
+  db.adminSession.findMany({where:{userId:id},orderBy:{createdAt:"desc"}}),
+  db.productPurchase.findMany({where:{userId:id},include:{product:true},orderBy:{createdAt:"desc"},take:50})
  ]);
  const walletView = wallet ? {id:wallet.id,balance:Number(wallet.balance),availableBalance:Number(wallet.availableBalance)} : null;
  const user={id:u.id,fullName:u.fullName,email:u.email,role:u.role,status:u.status,totpEnabled:u.totpEnabled,createdAt:u.createdAt,updatedAt:u.updatedAt,
@@ -25,7 +26,8 @@ export async function GET(_request:Request,ctx:{params:Promise<{id:string}>}){
   holdings:holdings.map(h=>({id:h.id,quantity:Number(h.quantity),averagePrice:Number(h.averagePrice),updatedAt:h.updatedAt,stock:h.stock?{symbol:h.stock.symbol,name:h.stock.name}:null})),
   tickets,
   sessions:sessions.map(s=>({id:s.id,createdAt:s.createdAt,expiresAt:s.expiresAt})),
-  adminSessions:adminSessions.map(s=>({id:s.id,createdAt:s.createdAt,expiresAt:s.expiresAt}))
+  adminSessions:adminSessions.map(s=>({id:s.id,createdAt:s.createdAt,expiresAt:s.expiresAt})),
+  purchases:purchases.map(p=>({id:p.id,reference:p.reference,amount:Number(p.amount),downPayment:p.downPayment?Number(p.downPayment):null,currency:p.currency,status:p.status,paymentStatus:p.paymentStatus,paymentMethod:p.paymentMethod,deliveryMethod:p.deliveryMethod,deliveryAddress:p.deliveryAddress,preferredDate:p.preferredDate,createdAt:p.createdAt,product:{id:p.product.id,name:p.product.name,imageUrl:p.product.imageUrl}}))
  };
  return noStore({user,viewer:{id:admin.id,role:admin.role}});
 }
