@@ -6,16 +6,17 @@ import {useState} from "react";
 
 const items=[
   ["Dashboard","/dashboard","⌂"],
-  ["Wallet","/wallet","▣"],
-  ["Investments","/investments","↗"],
-  ["Stocks","/stocks","▥"],
-  ["Portfolio","/portfolio","◔"],
-  ["Transactions","/transactions","⇄"],
-  ["Investment Dashboard","/investment-dashboard","▥"],
+  ["Markets","/stocks","↗"],
   ["Inventory","/inventory","▱"],
-  ["Orders","/orders","▤"],
-  ["Account","/account","♙"],
+  ["Wallet","/wallet","₦"],
+  ["Portfolio","/portfolio","◔"],
+  ["Purchases","/purchases","✓"],
+  ["Orders","/orders","≡"],
+  ["Transactions","/transactions","⇄"],
+  ["Investments","/investments","◆"],
+  ["Analytics","/investment-dashboard","▥"],
   ["Support","/support","?"],
+  ["Account","/account","♙"],
 ];
 
 export default function MobileNavigation({name,email}:{name:string;email:string}){
