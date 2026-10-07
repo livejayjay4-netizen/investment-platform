@@ -1,1 +1,16 @@
-"use client";import {useState} from "react";import Link from "next/link";export default function Deposit(){const[amount,setAmount]=useState("");const[method,setMethod]=useState("Bank transfer");const[msg,setMsg]=useState("");async function submit(){setMsg("Submitting…");const r=await fetch("/api/wallet/deposit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({amount,method})});const d=await r.json();setMsg(r.ok?"Deposit request submitted and is pending review.":(d.error||"Could not submit request."));if(r.ok)setAmount("")}return <><div className="topbar"><div><p className="eyebrow">Wallet</p><h1>Deposit funds</h1><p className="muted">Create a deposit request. Funds are not marked completed until verified.</p></div><Link className="btn secondary" href="/wallet">Back to wallet</Link></div><div className="card form"><label className="label">Amount (USD)</label><input className="input" type="number" min="1" step="0.01" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="1000"/><label className="label">Method</label><select className="input" value={method} onChange={e=>setMethod(e.target.value)}><option>Bank transfer</option><option>Card</option><option>Other</option></select>{msg&&<div className={msg.startsWith("Deposit request")?"success":"error"}>{msg}</div>}<button className="btn" onClick={submit}>Submit deposit request</button></div></>}
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+export default function Deposit() {
+  const [amount,setAmount]=useState("");
+  const [msg,setMsg]=useState("");
+  useEffect(()=>{const q=new URLSearchParams(window.location.search);const s=q.get("status");if(s==="success")setMsg("Payment verified. Your wallet has been credited.");else if(s==="error")setMsg(q.get("message")||"Payment verification failed.");else if(s==="missing_reference")setMsg("Payment reference was missing.");},[]);
+  async function submit(){
+    setMsg("Connecting to secure Paystack checkout…");
+    const r=await fetch("/api/wallet/deposit",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({amount})});
+    const d=await r.json();
+    if(r.ok&&d.authorizationUrl){window.location.assign(d.authorizationUrl);return;}
+    setMsg(d.error||"Could not initialize payment.");
+  }
+  return <><div className="topbar"><div><p className="eyebrow">Wallet</p><h1>Deposit funds</h1><p className="muted">Payments are processed securely by Paystack. Your wallet is credited only after server-side verification.</p></div><Link className="btn secondary" href="/wallet">Back to wallet</Link></div><div className="card form"><label className="label">Amount (NGN)</label><input className="input" type="number" min="50" step="1" value={amount} onChange={e=>setAmount(e.target.value)} placeholder="5000"/>{msg&&<div className={msg.includes("credited")?"success":"error"}>{msg}</div>}<button className="btn" onClick={submit}>Pay with Paystack</button></div></>;
+}
