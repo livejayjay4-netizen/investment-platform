@@ -23,9 +23,9 @@ export async function POST(req: NextRequest) {
       const purchase = await db.productPurchase.findFirst({ where: { paymentReference: reference } });
       if (purchase) {
         const expected = Number(purchase.downPayment || purchase.amount);
-        if (verified.status === "success" && verified.reference === reference && verified.currency === "USD" && Number(verified.amount) === Math.round(expected * 100)) {
+        if (verified.status === "success" && verified.reference === reference && verified.currency === purchase.currency && Number(verified.amount) === Math.round(expected * 100)) {
           await db.productPurchase.updateMany({ where: { id: purchase.id, paymentStatus: { not: "PAID" } }, data: { paymentStatus: "PAID", status: "REVIEWING" } });
-          await db.auditLog.create({ data: { actorId: purchase.userId, action: "VEHICLE_PAYMENT_CONFIRMED_WEBHOOK", targetType: "ProductPurchase", targetId: purchase.id, metadata: JSON.stringify({ reference, amount: expected, currency: "USD" }) } });
+          await db.auditLog.create({ data: { actorId: purchase.userId, action: "VEHICLE_PAYMENT_CONFIRMED_WEBHOOK", targetType: "ProductPurchase", targetId: purchase.id, metadata: JSON.stringify({ reference, amount: expected, currency: purchase.currency }) } });
         }
       }
       if (tx && tx.type === "DEPOSIT" && tx.status !== "COMPLETED") {
