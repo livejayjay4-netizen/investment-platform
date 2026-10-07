@@ -1,0 +1,4 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+export default function PurchaseButton({productId}:{productId:string}){const[busy,setBusy]=useState(false);const[msg,setMsg]=useState("");const router=useRouter();async function purchase(){setBusy(true);setMsg("");try{const r=await fetch("/api/purchases",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({productId})});const d=await r.json();if(!r.ok){setMsg(d.error||"Could not create purchase request.");return}router.push("/purchases")}catch{setMsg("Could not reach the purchase service. Try again.")}finally{setBusy(false)}}return <div>{msg&&<div className="error" style={{marginBottom:12}}>{msg}</div>}<button className="btn" disabled={busy} onClick={purchase}>{busy?"Creating request…":"Purchase / Request vehicle"}</button></div>}
