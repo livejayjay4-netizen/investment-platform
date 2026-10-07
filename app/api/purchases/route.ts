@@ -15,8 +15,8 @@ export async function POST(req:Request){
   const body=await req.json().catch(()=>null);
   const productId=typeof body?.productId==="string"?body.productId:"";
   if(!productId)return NextResponse.json({error:"Product is required."},{status:400});
-  const product=await db.product.findFirst({where:{id:productId,active:true}});
-  if(!product)return NextResponse.json({error:"This product is no longer available."},{status:404});
+  const product=await db.product.findFirst({where:{id:productId,active:true,stockQuantity:{gt:0},availability:"AVAILABLE"}});
+  if(!product)return NextResponse.json({error:"This product is currently unavailable or out of stock."},{status:404});
   if(product.price===null)return NextResponse.json({error:"Price is not currently available. Contact support."},{status:400});
   const reference="PUR-"+randomUUID().replaceAll("-","").slice(0,18).toUpperCase();
   const purchase=await db.productPurchase.create({data:{reference,userId:user.id,productId:product.id,amount:product.price,downPayment:product.downPayment,currency:product.currency,status:"REQUESTED",paymentStatus:"UNPAID"}});
