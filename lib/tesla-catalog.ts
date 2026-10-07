@@ -1,4 +1,4 @@
-export const TESLA_MODEL_COLORS=["Stealth Grey","Pearl White Multi-Coat","Diamond Black","Frost Blue Metallic","Ultra Red","Quicksilver"] as const;
+export const TESLA_MODEL_COLORS=["Stealth Grey","Pearl White Multi-Coat","Diamond Black","Frost Blue Metallic","Marine Blue","Ultra Red","Quicksilver"] as const;
 export const VERIFIED_TESLA:Record<string,any>={
 "tesla-model-3-stealth-grey":{name:"Tesla Model 3 — Rear-Wheel Drive · Stealth Grey",price:36990,downPayment:7398,modelYear:2026,trim:"Rear-Wheel Drive",exteriorColor:"Stealth Grey",interiorColor:"All Black Partial Premium",drivetrain:"Rear-Wheel Drive",rangeMiles:321,availableColors:TESLA_MODEL_COLORS},
 "tesla-model-3-pearl-white":{name:"Tesla Model 3 — Premium Rear-Wheel Drive · Pearl White",price:42490,downPayment:8498,modelYear:2026,trim:"Premium Rear-Wheel Drive",exteriorColor:"Pearl White Multi-Coat",interiorColor:"Black Premium",drivetrain:"Rear-Wheel Drive",rangeMiles:343,availableColors:TESLA_MODEL_COLORS},
