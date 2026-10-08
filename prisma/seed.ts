@@ -78,7 +78,7 @@ async function main(){
   // Keep the customer inventory focused on Tesla vehicles only. Existing Starlink, energy and other non-vehicle records are retained but hidden/deactivated.
   await db.product.updateMany({where:{brand:{not:"Tesla"}},data:{active:false,stockQuantity:0,availability:"OUT_OF_STOCK"}});
   await db.product.updateMany({where:{brand:"Tesla"},data:{active:false,stockQuantity:0,availability:"OUT_OF_STOCK"}});
-  const currentVehicleProducts=[...products,...extraColorProducts].filter(p=>p.slug.startsWith("tesla-model-3-")||p.slug.startsWith("tesla-model-y-")||p.slug.startsWith("tesla-cybertruck-"));
+  const currentVehicleProducts=[...products,...extraColorProducts].filter(p=>p.brand==="Tesla");
   for(const p of currentVehicleProducts){
     await db.product.upsert({where:{slug:p.slug},update:{...p,active:true,stockQuantity:5,availability:"AVAILABLE"},create:{...p,active:true,stockQuantity:5,availability:"AVAILABLE"}});
   }
