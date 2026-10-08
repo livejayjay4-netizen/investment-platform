@@ -78,7 +78,20 @@ async function main(){
   // Keep the customer inventory focused on Tesla vehicles only. Existing Starlink, energy and other non-vehicle records are retained but hidden/deactivated.
   await db.product.updateMany({where:{brand:{not:"Tesla"}},data:{active:false,stockQuantity:0,availability:"OUT_OF_STOCK"}});
   await db.product.updateMany({where:{brand:"Tesla"},data:{active:false,stockQuantity:0,availability:"OUT_OF_STOCK"}});
-  const currentVehicleProducts=[...products,...extraColorProducts].filter(p=>p.brand==="Tesla");
+  const colorImageOverrides:Record<string,string>={
+    "Tesla Model 3 — Stealth Grey":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%203%20Highland%20Standard%20RWD%20Stealth%20Grey.jpg",
+    "Tesla Model 3 — Diamond Black":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%203%20Highland%20Diamond%20Black%20%281%29.jpg",
+    "Tesla Model 3 — Ultra Red":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%203%20Highland%20Dual%20Motor%20AWD%20Ultra%20Red%2001.jpg",
+    "Tesla Model 3 — Quicksilver":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%203%20Highland%20Dual%20Motor%20AWD%20Quicksilver%2001.jpg",
+    "Tesla Model Y — Diamond Black":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%20Y%20L%20Premium%20Long%20Range%20AWD%20Diamond%20Black%2001.jpg",
+    "Tesla Model Y — Stealth Grey":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%20Y%20L%20Premium%20Long%20Range%20AWD%20Stealth%20Grey.jpg",
+    "Tesla Model Y — Ultra Red":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%20Y%20L%20Premium%20Long%20Range%20AWD%20Ultra%20Red%2001.jpg",
+    "Tesla Model Y — Quicksilver":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%20Y%20L%20Premium%20Long%20Range%20AWD%20Cosmic%20Silver%2001.jpg",
+    "Tesla Model S — Ultra Red":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%20S%20signature%20red.jpg",
+    "Tesla Model S — Red":"https://commons.wikimedia.org/wiki/Special:FilePath/Tesla%20Model%20S%20signature%20red.jpg",
+    "Tesla Roadster — Red":"https://commons.wikimedia.org/wiki/Special:FilePath/TeslaRoadster-front.jpg"
+  };
+  const currentVehicleProducts=[...products,...extraColorProducts].filter(p=>p.brand==="Tesla").map(p=>({...p,imageUrl:colorImageOverrides[p.name]||p.imageUrl}));
   for(const p of currentVehicleProducts){
     await db.product.upsert({where:{slug:p.slug},update:{...p,active:true,stockQuantity:5,availability:"AVAILABLE"},create:{...p,active:true,stockQuantity:5,availability:"AVAILABLE"}});
   }
