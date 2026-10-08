@@ -8,13 +8,13 @@ export async function POST(req:Request){
  const user=await getUser(); if(!user)return NextResponse.json({error:"Authentication required."},{status:401});
  const isForm=req.headers.get("content-type")?.includes("application/x-www-form-urlencoded");
  const b=isForm?Object.fromEntries(await req.formData()):await req.json().catch(()=>null);
- const productId=String(b?.productId||""),phone=String(b?.customerPhone||"").trim(),method=String(b?.deliveryMethod||"").trim(),address=String(b?.deliveryAddress||"").trim(),preferred=String(b?.preferredDate||"").trim();
+ const productId=String(b?.productId||""),phone=String(b?.customerPhone||"").trim(),method=String(b?.deliveryMethod||"").trim(),address=String(b?.deliveryAddress||"").trim(),preferred=String(b?.preferredDate||"").trim(); const config={color:String(b?.vehicleColor||"").trim(),wheelSize:String(b?.wheelSize||"").trim(),driverAssistance:String(b?.driverAssistance||"").trim(),transmission:String(b?.transmission||"").trim()};
  if(!productId||!phone||!method||!address)return NextResponse.json({error:"Phone, delivery method and delivery address are required."},{status:400});
- const p=await db.product.findFirst({where:{id:productId,active:true,brand:{in:["Tesla","Starlink"]},stockQuantity:{gt:0},availability:"AVAILABLE"}});
+ const p=await db.product.findFirst({where:{id:productId,active:true,brand:"Tesla",stockQuantity:{gt:0},availability:"AVAILABLE"}});
  if(!p||p.price===null)return NextResponse.json({error:"This product requires a quote and cannot be paid online yet."},{status:400});
  const payAmount=p.downPayment&&Number(p.downPayment)>0?Number(p.downPayment):Number(p.price);
  const reference="MON-"+randomUUID().replaceAll("-","").slice(0,20).toUpperCase();
- const purchase=await db.productPurchase.create({data:{reference,userId:user.id,productId:p.id,amount:p.price,downPayment:p.downPayment,currency:p.currency,status:"REQUESTED",paymentStatus:"UNPAID",customerPhone:phone,deliveryMethod:method,deliveryAddress:address,preferredDate:preferred?new Date(preferred):null,paymentReference:reference,paymentMethod:"MONNIFY"}});
+ const purchase=await db.productPurchase.create({data:{reference,userId:user.id,productId:p.id,amount:p.price,downPayment:p.downPayment,currency:p.currency,status:"REQUESTED",paymentStatus:"UNPAID",customerPhone:phone,deliveryMethod:method,deliveryAddress:address,preferredDate:preferred?new Date(preferred):null,paymentReference:reference,paymentMethod:"MONNIFY",notes:JSON.stringify({configuration:config})}});
  try{
   const origin=new URL(req.url).origin;
   const init=await initializeMonnify({amount:payAmount,email:user.email,name:user.fullName,reference,description:p.name,currency:p.currency,redirectUrl:origin+"/api/payments/monnify/purchase-callback"});
