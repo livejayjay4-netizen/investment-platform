@@ -9,7 +9,7 @@ export default async function ProductsPage() {
   const products = await db.product.findMany({
     where: {
       active: true,
-      brand: { in: ["Tesla", "Starlink"] },
+      brand: "Tesla",
       stockQuantity: { gt: 0 },
     },
     orderBy: [{ featured: "desc" }, { createdAt: "desc" }],
@@ -17,8 +17,8 @@ export default async function ProductsPage() {
 
   return (
     <ProductsBrowser
-      title="Tesla & Starlink Inventory"
-      subtitle="Browse available Tesla vehicles and Starlink products, review pricing and start a purchase request."
+      title="Tesla Vehicle Inventory"
+      subtitle="Browse Tesla vehicles by model, color and configuration, then start a purchase request."
       products={products.map((p) => ({
         id: p.id,
         name: p.name,
