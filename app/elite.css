@@ -10,3 +10,39 @@ body{background:var(--bg);color:var(--ink)}
 @media(max-width:390px){.admin-kpis{grid-template-columns:1fr}.dashboard-hero h2{font-size:22px}}
 .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.product-card{border-color:#d8dce1;border-radius:22px;background:linear-gradient(180deg,#fff,#f8f8f7);box-shadow:0 18px 45px rgba(12,15,20,.07)}.product-image{height:270px;background:linear-gradient(135deg,#d9dde1,#7c838b 55%,#171a1e);position:relative}.product-image:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.3));pointer-events:none}.product-image img{width:100%;height:100%;object-fit:cover}.product-body{padding:22px}.product-meta{display:flex;justify-content:space-between;gap:10px;color:#7b838d;font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}.product-card h2{font:800 23px Manrope,sans-serif;letter-spacing:-.035em;margin:9px 0}.product-price{font:800 25px Manrope,sans-serif;letter-spacing:-.04em;margin-top:16px;color:#15181d}.product-actions{margin-top:18px}.product-actions .btn{width:100%}@media(max-width:700px){.product-grid{grid-template-columns:1fr}.product-image{height:230px}.product-body{padding:18px}}
 .checkout-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.checkout-vehicle{display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:center;padding-bottom:22px;border-bottom:1px solid var(--line)}.checkout-vehicle img{width:180px;height:120px;object-fit:cover;border-radius:14px}.checkout-price{font:800 28px Manrope,sans-serif;letter-spacing:-.04em;margin:12px 0}.checkout-steps{display:flex;gap:8px;flex-wrap:wrap;padding:17px 0;border-bottom:1px solid var(--line);margin-bottom:20px}.checkout-steps span{font-size:10px;font-weight:800;color:#8a929d;background:#f0f2f4;padding:8px 10px;border-radius:20px}.checkout-steps .active{color:#8f151d;background:#f8e9e9}.checkout-summary{align-self:start;position:sticky;top:18px}.checkout-summary h2{font:800 22px Manrope,sans-serif;margin:12px 0 20px}.summary-line,.summary-total{display:flex;justify-content:space-between;gap:15px;padding:12px 0;border-bottom:1px solid var(--line)}.summary-total{margin-top:5px;border-bottom:0;padding-top:18px}.summary-total strong{font:800 25px Manrope,sans-serif}.checkout-summary ul{margin:20px 0 0;padding-left:18px;color:var(--muted);line-height:2;font-size:12px}.checkout-note{margin-top:12px;font-size:11px}@media(max-width:800px){.checkout-grid{grid-template-columns:1fr}.checkout-summary{position:static}.checkout-vehicle{grid-template-columns:1fr}.checkout-vehicle img{width:100%;height:210px}}
+/* Reference-style mobile navigation drawer */
+.mobile-menu-button{display:none;position:fixed;top:12px;left:12px;width:42px;height:42px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#090b0e;color:#fff;z-index:55;padding:0;align-items:center;justify-content:center;flex-direction:column;gap:4px;box-shadow:0 10px 28px rgba(0,0,0,.22);cursor:pointer}
+.mobile-menu-button span{display:block;width:17px;height:2px;border-radius:2px;background:#e7d5aa;transition:.2s}
+.mobile-menu-button.is-open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.mobile-menu-button.is-open span:nth-child(2){opacity:0}
+.mobile-menu-button.is-open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.mobile-nav-backdrop{position:fixed;inset:0;background:rgba(2,5,8,.62);backdrop-filter:blur(3px);border:0;z-index:45}
+.mobile-drawer{position:fixed;inset:0 auto 0 0;width:min(330px,88vw);background:linear-gradient(180deg,#080a0d 0%,#0d1015 65%,#090b0e 100%);color:#aeb7c4;z-index:50;transform:translateX(-105%);transition:transform .25s ease;box-shadow:22px 0 60px rgba(0,0,0,.28);display:flex;flex-direction:column;padding:18px 14px}
+.mobile-drawer.open{transform:translateX(0)}
+.mobile-drawer-head{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 18px;border-bottom:1px solid #20252d}
+.mobile-drawer-head .app-brand{color:#fff}
+.mobile-drawer-close{width:36px;height:36px;border:1px solid #2a3038;background:#111419;color:#cfd5dd;border-radius:10px;font-size:25px;line-height:1;cursor:pointer}
+.mobile-profile{display:flex;align-items:center;gap:11px;padding:17px 6px;border-bottom:1px solid #20252d}
+.mobile-profile .avatar{background:linear-gradient(135deg,#e7d5aa,#a98648);color:#15181d}
+.mobile-profile>div:last-child{display:grid;gap:3px;min-width:0}
+.mobile-profile strong{color:#fff;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mobile-profile span{color:#737e8c;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mobile-drawer-nav{overflow:auto;padding:10px 0 12px;scrollbar-width:none}
+.mobile-drawer-nav::-webkit-scrollbar{display:none}
+.mobile-nav-group{margin:6px 0 13px}
+.mobile-nav-group-title{padding:5px 10px 7px;color:#586271;font-size:9px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+.mobile-drawer-nav a{display:flex;align-items:center;gap:10px;min-height:43px;padding:9px 10px;border-radius:11px;color:#aeb7c4;font-size:12px;font-weight:700;position:relative}
+.mobile-drawer-nav a:hover{background:rgba(255,255,255,.045);color:#fff}
+.mobile-drawer-nav a.active{background:linear-gradient(90deg,rgba(179,25,34,.24),rgba(179,25,34,.06));color:#fff;border:1px solid rgba(179,25,34,.24)}
+.mobile-drawer-nav a>span{width:21px;text-align:center;color:#c8a966;font-size:15px}
+.mobile-drawer-nav a i{margin-left:auto;width:5px;height:5px;border-radius:50%;background:#c8a966;box-shadow:0 0 9px rgba(200,169,102,.6)}
+.mobile-drawer-footer{margin-top:auto;border-top:1px solid #20252d;padding:12px 5px 3px}
+.mobile-drawer-logout{display:flex;align-items:center;justify-content:space-between;padding:10px 7px;color:#b8c0ca;font-size:11px;font-weight:800}
+.mobile-drawer-logout:hover{color:#fff}
+.mobile-drawer-footer small{display:block;color:#4f5967;font-size:8px;padding:4px 7px 0;letter-spacing:.05em}
+@media(max-width:700px){
+  .mobile-menu-button{display:flex}
+  .mobile-topbar{padding-left:64px}
+  .mobile-topbar .elite-brand{margin-left:0}
+  .mobile-topbar .elite-brand-copy strong{font-size:11px}
+}
