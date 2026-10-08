@@ -7,7 +7,7 @@ function cfg(){
   const secretKey=process.env.MONNIFY_SECRET_KEY;
   const contractCode=process.env.MONNIFY_CONTRACT_CODE;
   if(!apiKey||!secretKey||!contractCode) throw new Error("Monnify credentials are not configured. Add MONNIFY_API_KEY, MONNIFY_SECRET_KEY and MONNIFY_CONTRACT_CODE.");
-  return {apiKey,secretKey,contractCode,base:(process.env.MONNIFY_BASE_URL||DEFAULT_BASE_URL).replace(/\\/$/,"")};
+  return {apiKey,secretKey,contractCode,base:(process.env.MONNIFY_BASE_URL||DEFAULT_BASE_URL).replace(/\/$/,"")};
 }
 
 async function token(){
