@@ -19,8 +19,8 @@ async function main(){
   await db.user.updateMany({where:{role:Role.READ_ONLY_ADMIN},data:{role:Role.READ_WRITE_ADMIN}});
   await db.user.upsert({
     where:{email},
-    update:{passwordHash:hash,role:Role.ADMIN,...(resetAdmin2FA?{totpSecret:null,totpEnabled:false}:{})},
-    create:{email,fullName:"Platform Administrator",passwordHash:hash,role:Role.ADMIN,wallet:{create:{}}}
+    update:{passwordHash:hash,role:Role.ADMIN,status:"ACTIVE",...(resetAdmin2FA?{totpSecret:null,totpEnabled:false}:{})},
+    create:{email,fullName:"Platform Administrator",passwordHash:hash,role:Role.ADMIN,status:"ACTIVE",wallet:{create:{}}}
   });
 
   const rows=[
