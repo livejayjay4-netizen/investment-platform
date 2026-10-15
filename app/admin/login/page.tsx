@@ -78,12 +78,12 @@ export default function AdminLogin() {
 
   if (step === "setup") return (
     <div className="card form">
-      <div className="brand"><span className="brandMark">IP</span>Admin Security</div>
+      <div className="brand"><span className="brandMark">EA</span>Elite Auto Security</div>
       <h1>Protect the admin portal</h1>
       <p className="muted">Administrator access requires a password and authenticator-based two-factor authentication.</p>
       <div className="notice">
         <b>1.</b> Open Google Authenticator, Microsoft Authenticator, Authy, or another TOTP app.<br/>
-        <b>2.</b> Add <b>Investment Platform</b> using the setup secret below.<br/>
+        <b>2.</b> Add <b>Elite Auto Investment</b> using the setup secret below.<br/>
         <b>3.</b> Enter the current 6-digit code to activate 2FA.
       </div>
       {!setup ? (
@@ -110,7 +110,7 @@ export default function AdminLogin() {
 
   if (step === "2fa") return (
     <div className="card form">
-      <div className="brand"><span className="brandMark">IP</span>Admin Security</div>
+      <div className="brand"><span className="brandMark">EA</span>Elite Auto Security</div>
       <h1>Two-factor verification</h1>
       <p className="muted">Enter the current 6-digit code from your authenticator app.</p>
       {error && <div className="error">{error}</div>}
@@ -131,9 +131,9 @@ export default function AdminLogin() {
 
   return (
     <div className="card form">
-      <div className="brand"><span className="brandMark">IP</span>Administrator Access</div>
+      <div className="brand"><span className="brandMark">EA</span>Elite Auto Investment</div>
       <h1>Admin portal</h1>
-      <p className="muted">Separate administrator authentication for the investment platform.</p>
+      <p className="muted">Secure administrator access for Elite Auto Investment.</p>
       {error && <div className="error">{error}</div>}
       <form onSubmit={start}>
         <label className="label">Admin email</label>
