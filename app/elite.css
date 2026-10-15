@@ -48,43 +48,64 @@ body{background:var(--bg);color:var(--ink)}
 }
 
 
-/* App-wide display reliability and responsive polish */
-:root{color-scheme:light}
-html,body{width:100%;min-height:100%;overflow-x:clip}
-img,video,canvas,svg{max-width:100%}
-button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(185,154,91,.55);outline-offset:3px}
-input,select,textarea{max-width:100%;min-width:0}
-.page-wrap,.admin-content,.admin-main,.main,.card,.panel,.table-wrap{min-width:0}
-.table-wrap{-webkit-overflow-scrolling:touch}
-.page-title,.admin-page-head,.section-head{flex-wrap:wrap}
-@media(max-width:1050px){.page-wrap{padding-left:24px;padding-right:24px}.admin-content{padding-left:24px;padding-right:24px}}
-@media(max-width:700px){
- .page-wrap{padding:18px 14px calc(92px + env(safe-area-inset-bottom))}
- .admin-content{padding:16px 12px calc(90px + env(safe-area-inset-bottom))}
- .page-title h1,.admin-page-head h1{overflow-wrap:anywhere}
- .topbar-actions,.admin-head-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
- .topbar-actions .btn,.admin-head-actions .btn{width:100%;min-width:0;padding-inline:10px}
- .metric-grid,.admin-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
- .checkout-grid,.dashboard-columns{grid-template-columns:minmax(0,1fr)}
- .table-wrap table{min-width:600px}
- .form{padding:22px 18px}
- .auth-shell{padding:16px;align-items:center}
- .auth-shell>.card{width:100%;max-width:460px}
- .admin-mobile-nav{position:sticky;top:58px;z-index:24;display:flex;gap:7px;overflow-x:auto;padding:9px 12px;background:#101318;border-bottom:1px solid #282d35;scrollbar-width:none}
- .admin-mobile-nav::-webkit-scrollbar{display:none}
- .admin-mobile-nav a{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:9px 11px;border:1px solid #303640;border-radius:10px;color:#d3d8df;font-size:11px;font-weight:750;white-space:nowrap}
- .admin-mobile-nav a:active,.admin-mobile-nav a:hover{background:rgba(179,25,34,.2);border-color:rgba(179,25,34,.5);color:#fff}
+/* Admin navigation should remain usable when the full sidebar no longer fits. */
+.admin-mobile-nav{display:none}
+@media(max-width:900px){
+  .admin-side{display:none}
+  .admin-main{margin-left:0}
+  .admin-mobile-head{
+    display:flex;
+    position:sticky;
+    top:0;
+    z-index:25;
+    height:58px;
+    padding:10px 14px;
+    background:rgba(9,11,14,.97);
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid #242932;
+  }
+  .admin-mobile-nav{
+    position:sticky;
+    top:58px;
+    z-index:24;
+    display:flex;
+    align-items:center;
+    gap:7px;
+    overflow-x:auto;
+    padding:9px 12px;
+    background:#101318;
+    border-bottom:1px solid #282d35;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .admin-mobile-nav::-webkit-scrollbar{display:none}
+  .admin-mobile-nav a{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    min-height:36px;
+    padding:8px 11px;
+    border:1px solid #303640;
+    border-radius:10px;
+    color:#d3d8df;
+    font-size:11px;
+    font-weight:750;
+    white-space:nowrap;
+  }
+  .admin-mobile-nav a:active,.admin-mobile-nav a:hover{
+    background:rgba(179,25,34,.2);
+    border-color:rgba(179,25,34,.5);
+    color:#fff;
+  }
+  .admin-content{padding:18px 14px 50px}
 }
 @media(max-width:390px){
- .page-wrap{padding-left:11px;padding-right:11px}
- .admin-content{padding-left:10px;padding-right:10px}
- .metric-grid,.admin-kpis{grid-template-columns:minmax(0,1fr)}
- .topbar-actions,.admin-head-actions{grid-template-columns:minmax(0,1fr)}
- .value{overflow-wrap:anywhere}
+  .admin-content{padding:14px 10px 44px}
+  .admin-page-head h1{font-size:27px}
+  .admin-kpi{padding:13px;min-height:112px}
+  .admin-kpi strong{font-size:20px}
 }
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-.admin-mobile-nav{display:none}
 .auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:22px;color:var(--ink);font-family:Manrope,sans-serif;font-weight:800;font-size:15px}
 .auth-brand .elite-mark{flex:0 0 auto}
 .auth-brand .elite-mark span{color:#e7d5aa}
